@@ -99,9 +99,9 @@ internal fun App() {
                     }
                 }
                 ShowBehind(
-                    size = size,
                     offset = offset,
                     offsetChange = { offset += it },
+                    size = size,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -111,9 +111,9 @@ internal fun App() {
 
 @Composable
 internal fun ShowBehind(
-    size: Float,
-    offset: Offset = Offset.Zero,
-    offsetChange: (Offset) -> Unit = {},
+    size: Float = 100f,
+    offset: Offset,
+    offsetChange: (Offset) -> Unit,
     modifier: Modifier = Modifier,
     surfaceColor: Color = MaterialTheme.colorScheme.surface,
     borderColor: Color = MaterialTheme.colorScheme.primary,
