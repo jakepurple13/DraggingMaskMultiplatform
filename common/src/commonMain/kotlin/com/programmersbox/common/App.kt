@@ -111,9 +111,9 @@ internal fun App() {
 
 @Composable
 internal fun ShowBehind(
-    size: Float = 100f,
     offset: Offset,
     offsetChange: (Offset) -> Unit,
+    size: Float = 100f,
     modifier: Modifier = Modifier,
     surfaceColor: Color = MaterialTheme.colorScheme.surface,
     borderColor: Color = MaterialTheme.colorScheme.primary,
