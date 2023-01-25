@@ -53,8 +53,7 @@ internal fun App() {
                                     trailingIcon = {
                                         IconButton(onClick = { url = customUrl }) { Icon(Icons.Default.Send, null) }
                                     },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    enabled = showCustomUrl
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             },
                             trailingContent = {

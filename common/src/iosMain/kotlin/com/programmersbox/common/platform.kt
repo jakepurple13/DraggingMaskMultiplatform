@@ -3,8 +3,10 @@ package com.programmersbox.common
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -30,9 +32,19 @@ private fun UIShow() {
 }
 
 public fun MainViewController(): UIViewController = Application("DraggingMask") {
-    Column {
-        Spacer(Modifier.height(30.dp))
-        UIShow()
+    MaterialTheme(
+        colorScheme = darkColorScheme()
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                Spacer(Modifier.height(30.dp))
+                UIShow()
+            }
+        }
     }
 }
 

@@ -28,9 +28,20 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "common"
-            isStatic = true
+            isStatic = false
+            embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.Framework.BitcodeEmbeddingMode.DISABLE)
         }
         extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
+    }
+    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
+        binaries.all {
+            freeCompilerArgs += listOf(
+                "-linker-option", "-framework", "-linker-option", "Metal",
+                "-linker-option", "-framework", "-linker-option", "CoreText",
+                "-linker-option", "-framework", "-linker-option", "CoreGraphics",
+                "-Xdisable-phases=VerifyBitcode"
+            )
+        }
     }
     sourceSets {
         val ktorVersion = "2.2.2"
@@ -90,7 +101,7 @@ kotlin {
         val iosSimulatorArm64Main by getting
         val iosMain by getting {
             dependencies {
-                api("io.ktor:ktor-client-darwin:$ktorVersion")
+                api("io.ktor:ktor-client-ios:$ktorVersion")
             }
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
