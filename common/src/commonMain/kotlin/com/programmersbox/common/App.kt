@@ -154,7 +154,6 @@ internal class ColorAnimation(
             }
         }
     }
-
 }
 
 @Composable
