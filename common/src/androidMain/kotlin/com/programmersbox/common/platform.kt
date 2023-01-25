@@ -16,6 +16,8 @@ public fun UIShow() {
     App()
 }
 
+internal actual val initialUrl: String = "https://pbs.twimg.com/media/E_QNt6HWEA4qZZi?format=jpg&name=4096x4096"
+
 @Composable
 internal actual fun NetworkImage(url: String, modifier: Modifier) {
     AsyncImage(

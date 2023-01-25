@@ -48,9 +48,11 @@ public fun MainViewController(): UIViewController = Application("DraggingMask") 
     }
 }
 
+internal actual val initialUrl: String = "https://wallpapercave.com/wp/wp7928325.jpg"
+
 @Composable
 internal actual fun M3MaterialThemeSetup(isDarkMode: Boolean, content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = if(isDarkMode) darkColorScheme() else lightColorScheme(), content = content)
+    MaterialTheme(colorScheme = if (isDarkMode) darkColorScheme() else lightColorScheme(), content = content)
 }
 
 @Composable

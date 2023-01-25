@@ -27,7 +27,7 @@ internal fun App() {
         var offset by remember { mutableStateOf(Offset.Zero) }
         var size by remember { mutableStateOf(100f) }
         var showCustomUrl by remember { mutableStateOf(false) }
-        var url by remember { mutableStateOf("https://images.alphacoders.com/117/1173124.jpg") }
+        var url by remember { mutableStateOf(initialUrl) }
         var customUrl by remember { mutableStateOf(url) }
         Surface {
             Scaffold(

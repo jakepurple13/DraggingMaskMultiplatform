@@ -22,6 +22,8 @@ public fun UIShow() {
     App()
 }
 
+internal actual val initialUrl: String = "https://cataas.com/cat"
+
 @Composable
 internal actual fun M3MaterialThemeSetup(isDarkMode: Boolean, content: @Composable () -> Unit) {
     MaterialTheme(colorScheme = darkColorScheme(), content = content)
@@ -50,4 +52,11 @@ internal actual fun NetworkImage(url: String, modifier: Modifier) {
             modifier = modifier
         )
     }
+    /*CompositionLocalProvider(LocalImageLoader provides remember { ImageLoaderBuilder().build() }) {
+        Image(
+            painter = rememberAsyncImagePainter(url),
+            contentDescription = null,
+            modifier = modifier
+        )
+    }*/
 }

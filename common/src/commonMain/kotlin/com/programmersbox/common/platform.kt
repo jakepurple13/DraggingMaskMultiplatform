@@ -6,6 +6,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 
 public expect fun getPlatformName(): String
 
+internal expect val initialUrl: String
+
 @Composable
 internal expect fun NetworkImage(url: String, modifier: Modifier)
 

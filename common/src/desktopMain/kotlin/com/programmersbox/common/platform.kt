@@ -1,10 +1,10 @@
 package com.programmersbox.common
 
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.Image
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
@@ -25,8 +25,10 @@ public fun UIShow() {
 
 @Composable
 internal actual fun M3MaterialThemeSetup(isDarkMode: Boolean, content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = if(isDarkMode) darkColorScheme() else lightColorScheme(), content = content)
+    MaterialTheme(colorScheme = if (isDarkMode) darkColorScheme() else lightColorScheme(), content = content)
 }
+
+internal actual val initialUrl: String = "https://images.alphacoders.com/117/1173124.jpg"
 
 @Composable
 internal fun loadImage(url: String): State<ImageLoading> = produceState<ImageLoading>(ImageLoading.Loading, url) {
