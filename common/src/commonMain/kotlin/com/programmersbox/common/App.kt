@@ -1,6 +1,8 @@
 package com.programmersbox.common
 
+import androidx.compose.animation.Animatable
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
@@ -29,6 +31,7 @@ internal fun App() {
         var showCustomUrl by remember { mutableStateOf(false) }
         var url by remember { mutableStateOf(initialUrl) }
         var customUrl by remember { mutableStateOf(url) }
+        var animateColors by remember { mutableStateOf(false) }
         Surface {
             Scaffold(
                 bottomBar = {
@@ -57,10 +60,17 @@ internal fun App() {
                                 )
                             },
                             trailingContent = {
-                                Switch(
-                                    showCustomUrl,
-                                    onCheckedChange = { showCustomUrl = it }
-                                )
+                                Column {
+                                    Switch(
+                                        showCustomUrl,
+                                        onCheckedChange = { showCustomUrl = it }
+                                    )
+
+                                    Switch(
+                                        animateColors,
+                                        onCheckedChange = { animateColors = it }
+                                    )
+                                }
                             }
                         )
                     }
@@ -78,22 +88,48 @@ internal fun App() {
                         }
 
                         false -> {
+                            val colors = listOf(
+                                Color.Blue,
+                                Color.Red,
+                                Color.Green,
+                                Color.Cyan,
+                                Color.Magenta,
+                                Color.Yellow
+                            )
+
+                            //Animating the colors!
+                            //region
+                            var currentIndex by remember { mutableStateOf(1) }
+                            val color = remember { Animatable(colors.first()) }
+
+                            LaunchedEffect(currentIndex, animateColors) {
+                                if (animateColors) {
+                                    val result = color.animateTo(
+                                        colors[currentIndex],
+                                        animationSpec = tween(1000, easing = LinearEasing)
+                                    )
+                                    if (result.endState.isFinished) {
+                                        currentIndex = if (currentIndex + 1 >= colors.size) {
+                                            0
+                                        } else {
+                                            currentIndex + 1
+                                        }
+                                    }
+                                }
+                            }
+                            //endregion
+
                             Box(
                                 Modifier
                                     .fillMaxSize()
                                     .padding(p)
-                                    .background(
-                                        Brush.sweepGradient(
-                                            listOf(
-                                                Color.Blue,
-                                                Color.Red,
-                                                Color.Green,
-                                                Color.Cyan,
-                                                Color.Magenta,
-                                                Color.Yellow
-                                            )
-                                        )
-                                    )
+                                    .let {
+                                        if (animateColors) {
+                                            it.background(color.value)
+                                        } else {
+                                            it.background(Brush.sweepGradient(colors))
+                                        }
+                                    }
                             )
                         }
                     }
