@@ -97,37 +97,21 @@ internal fun App() {
                                 Color.Yellow
                             )
 
-                            //Animating the colors!
-                            //region
-                            var currentIndex by remember { mutableStateOf(1) }
-                            val color = remember { Animatable(colors.first()) }
-
-                            LaunchedEffect(currentIndex, animateColors) {
-                                if (animateColors) {
-                                    val result = color.animateTo(
-                                        colors[currentIndex],
-                                        animationSpec = tween(1000, easing = LinearEasing)
-                                    )
-                                    if (result.endState.isFinished) {
-                                        currentIndex = if (currentIndex + 1 >= colors.size) {
-                                            0
-                                        } else {
-                                            currentIndex + 1
-                                        }
-                                    }
-                                }
+                            val ani = remember {
+                                List(colors.size) { index -> ColorAnimation(colors, index) }
                             }
-                            //endregion
+
+                            ani.forEach { it.start(animateColors) }
 
                             Box(
                                 Modifier
                                     .fillMaxSize()
                                     .padding(p)
-                                    .let {
+                                    .let { m ->
                                         if (animateColors) {
-                                            it.background(color.value)
+                                            m.background(Brush.sweepGradient(ani.map { it.color.value }))
                                         } else {
-                                            it.background(Brush.sweepGradient(colors))
+                                            m.background(Brush.sweepGradient(colors))
                                         }
                                     }
                             )
@@ -143,6 +127,34 @@ internal fun App() {
             }
         }
     }
+}
+
+internal class ColorAnimation(
+    private val colorList: List<Color>,
+    initialIndex: Int
+) {
+    private var currentIndex: Int by mutableStateOf(initialIndex)
+    val color = Animatable(colorList[currentIndex])
+
+    @Composable
+    fun start(animateColors: Boolean) {
+        LaunchedEffect(currentIndex, animateColors) {
+            if (animateColors) {
+                val result = color.animateTo(
+                    colorList[currentIndex],
+                    animationSpec = tween(1000, easing = LinearEasing)
+                )
+                if (result.endState.isFinished) {
+                    currentIndex = if (currentIndex + 1 >= colorList.size) {
+                        0
+                    } else {
+                        currentIndex + 1
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 @Composable
