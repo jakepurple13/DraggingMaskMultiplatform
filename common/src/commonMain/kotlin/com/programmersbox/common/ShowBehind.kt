@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -14,10 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 
@@ -28,11 +28,20 @@ internal fun ShowBehind(
     size: Float = 100f,
     modifier: Modifier = Modifier,
     surfaceColor: Color = MaterialTheme.colorScheme.surface,
-    borderColor: Color = MaterialTheme.colorScheme.primary,
-    borderWidth: Dp = 2.dp,
+    sourceDrawing: DrawScope.(color: Color, blendMode: BlendMode) -> Unit = { color, blendMode ->
+        drawCircle(
+            color = color,
+            radius = size / 2f,
+            center = offset + Offset(size / 2f, size / 2f),
+            blendMode = blendMode
+        )
+    },
+    sourceDraggingComposable: @Composable Density.() -> Unit = {
+        Box(Modifier.border(2.dp, MaterialTheme.colorScheme.primary, CircleShape))
+    },
     onDragStart: (Offset) -> Unit = {},
     onDragEnd: () -> Unit = {},
-    onDragCancel: () -> Unit = {}
+    onDragCancel: () -> Unit = {},
 ) {
     Box(modifier = modifier) {
         Canvas(Modifier.fillMaxSize()) {
@@ -43,27 +52,20 @@ internal fun ShowBehind(
                 drawRect(surfaceColor)
 
                 // Source
-                drawCircle(
-                    color = Color.Transparent,
-                    radius = size / 2f,
-                    center = offset + Offset(size / 2f, size / 2f),
-                    blendMode = BlendMode.DstIn
-                )
+                sourceDrawing(Color.Transparent, BlendMode.DstIn)
+
                 restoreToCount(checkPoint)
             }
         }
         Box(
-            modifier = Modifier
-                .drag(
-                    offset = offset,
-                    offsetChange = offsetChange,
-                    onDragStart = onDragStart,
-                    onDragEnd = onDragEnd,
-                    onDragCancel = onDragCancel
-                )
-                .border(borderWidth, borderColor, CircleShape)
-                .size(with(LocalDensity.current) { size.toDp() })
-        )
+            modifier = Modifier.drag(
+                offset = offset,
+                offsetChange = offsetChange,
+                onDragStart = onDragStart,
+                onDragEnd = onDragEnd,
+                onDragCancel = onDragCancel
+            )
+        ) { with(LocalDensity.current) { sourceDraggingComposable() } }
     }
 }
 

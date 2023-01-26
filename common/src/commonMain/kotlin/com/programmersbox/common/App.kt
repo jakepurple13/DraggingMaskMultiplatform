@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.*
@@ -168,7 +169,22 @@ internal fun App() {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(p)
-                            .onGloballyPositioned { center = it.size.center }
+                            .onGloballyPositioned { center = it.size.center },
+                        sourceDrawing = { color, blendMode ->
+                            drawRect(
+                                color = color,
+                                size = Size(size, size),
+                                blendMode = blendMode,
+                                topLeft = offset
+                            )
+                        },
+                        sourceDraggingComposable = {
+                            Box(
+                                Modifier
+                                    .size(size.toDp())
+                                    .border(2.dp, MaterialTheme.colorScheme.primary, RectangleShape)
+                            )
+                        }
                     )
                 }
             }
