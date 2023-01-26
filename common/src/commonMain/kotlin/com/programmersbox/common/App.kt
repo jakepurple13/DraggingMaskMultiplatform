@@ -19,12 +19,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.center
-import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import androidx.compose.ui.unit.*
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,8 +29,7 @@ internal fun App() {
         isDarkMode = isSystemInDarkTheme()
     ) {
         var offset by remember { mutableStateOf(Offset.Zero) }
-        val offsetX = remember(offset) { Animatable(offset.x) }
-        val offsetY = remember(offset) { Animatable(offset.y) }
+        val offsetAnimation = remember(offset) { Animatable(offset, Offset.VectorConverter) }
         var size by remember { mutableStateOf(100f) }
         var showCustomUrl by remember { mutableStateOf(false) }
         var url by remember { mutableStateOf(initialUrl) }
@@ -101,18 +95,12 @@ internal fun App() {
                                 OutlinedButton(
                                     onClick = {
                                         scope.launch {
-                                            awaitAll(
-                                                async {
-                                                    offsetX.animateTo(center.x.toFloat()) {
-                                                        offset = offset.copy(x = value - size / 2)
-                                                    }
-                                                },
-                                                async {
-                                                    offsetY.animateTo(center.y.toFloat()) {
-                                                        offset = offset.copy(y = value - size / 2)
-                                                    }
-                                                }
-                                            )
+                                            offsetAnimation.animateTo(center.toOffset()) {
+                                                offset = value.copy(
+                                                    x = value.x - size / 2,
+                                                    y = value.y - size / 2
+                                                )
+                                            }
                                         }
                                     }
                                 ) { Text("Reset Position") }
