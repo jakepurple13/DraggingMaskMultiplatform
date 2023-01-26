@@ -4,9 +4,7 @@ import androidx.compose.animation.Animatable
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
@@ -16,9 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
 import kotlinx.coroutines.launch
 
@@ -206,68 +202,3 @@ internal class ColorAnimation(
         }
     }
 }
-
-@Composable
-internal fun ShowBehind(
-    offset: Offset,
-    offsetChange: (Offset) -> Unit,
-    size: Float = 100f,
-    modifier: Modifier = Modifier,
-    surfaceColor: Color = MaterialTheme.colorScheme.surface,
-    borderColor: Color = MaterialTheme.colorScheme.primary,
-    borderWidth: Dp = 2.dp,
-    onDragStart: (Offset) -> Unit = {},
-    onDragEnd: () -> Unit = {},
-    onDragCancel: () -> Unit = {}
-) {
-    Box(modifier = modifier) {
-        Canvas(Modifier.fillMaxSize()) {
-            with(drawContext.canvas.nativeCanvas) {
-                val checkPoint = saveLayer(null, null)
-
-                // Destination
-                drawRect(surfaceColor)
-
-                // Source
-                drawCircle(
-                    color = Color.Transparent,
-                    radius = size / 2f,
-                    center = offset + Offset(size / 2f, size / 2f),
-                    blendMode = BlendMode.DstIn
-                )
-                restoreToCount(checkPoint)
-            }
-        }
-        Box(
-            modifier = Modifier
-                .drag(
-                    offset = offset,
-                    offsetChange = offsetChange,
-                    onDragStart = onDragStart,
-                    onDragEnd = onDragEnd,
-                    onDragCancel = onDragCancel
-                )
-                .border(borderWidth, borderColor, CircleShape)
-                .size(with(LocalDensity.current) { size.toDp() })
-        )
-    }
-}
-
-@Composable
-internal fun Modifier.drag(
-    offset: Offset,
-    offsetChange: (Offset) -> Unit,
-    onDragStart: (Offset) -> Unit = {},
-    onDragEnd: () -> Unit = {},
-    onDragCancel: () -> Unit = {}
-) = offset { offset.round() }
-    .pointerInput(Unit) {
-        detectDragGestures(
-            onDragStart = onDragStart,
-            onDragEnd = onDragEnd,
-            onDragCancel = onDragCancel
-        ) { change, dragAmount ->
-            change.consume()
-            offsetChange(dragAmount)
-        }
-    }
