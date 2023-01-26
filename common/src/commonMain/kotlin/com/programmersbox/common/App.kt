@@ -260,7 +260,7 @@ internal fun Modifier.drag(
     onDragStart: (Offset) -> Unit = {},
     onDragEnd: () -> Unit = {},
     onDragCancel: () -> Unit = {}
-) = offset { IntOffset(offset.x.toInt(), offset.y.toInt()) }
+) = offset { offset.round() }
     .pointerInput(Unit) {
         detectDragGestures(
             onDragStart = onDragStart,
