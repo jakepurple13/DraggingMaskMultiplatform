@@ -92,3 +92,55 @@ internal fun Modifier.drag(
             offsetChange(dragAmount)
         }
     }
+
+internal object ShowBehindDefaults {
+    fun defaultSourceDrawing(size: Float, offset: Offset): DrawScope.(color: Color, blendMode: BlendMode) -> Unit =
+        { color, blendMode ->
+            drawCircle(
+                color = color,
+                radius = size / 2f,
+                center = offset + Offset(size / 2f, size / 2f),
+                blendMode = blendMode
+            )
+        }
+
+    const val defaultSize = 100f
+}
+
+@Composable
+internal fun ShowBehind(
+    offset: () -> Offset,
+    offsetChange: (Offset) -> Unit,
+    modifier: Modifier = Modifier.fillMaxSize(),
+    surfaceColor: Color = MaterialTheme.colorScheme.surface,
+    onDragStart: (Offset) -> Unit = {},
+    onDragEnd: () -> Unit = {},
+    onDragCancel: () -> Unit = {},
+    sourceDrawing: DrawScope.(color: Color, blendMode: BlendMode) -> Unit = ShowBehindDefaults
+        .defaultSourceDrawing(ShowBehindDefaults.defaultSize, offset()),
+) {
+    Canvas(
+        modifier.pointerInput(Unit) {
+            detectDragGestures(
+                onDragStart = onDragStart,
+                onDragEnd = onDragEnd,
+                onDragCancel = onDragCancel
+            ) { change, dragAmount ->
+                change.consume()
+                offsetChange(dragAmount)
+            }
+        }
+    ) {
+        with(drawContext.canvas.nativeCanvas) {
+            val checkPoint = saveLayer(null, null)
+
+            // Destination
+            drawRect(surfaceColor)
+
+            // Source
+            sourceDrawing(Color.Transparent, BlendMode.DstIn)
+
+            restoreToCount(checkPoint)
+        }
+    }
+}

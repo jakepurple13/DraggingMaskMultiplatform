@@ -170,9 +170,40 @@ internal fun App() {
                             }
                         }
                     }
+
+
                     //This one guy is the reason why the masking works!
                     Crossfade(circleOrRect) { target ->
                         if (target) {
+                            ShowBehind(
+                                offset = { offset },
+                                offsetChange = { offset += it },
+                                sourceDrawing = ShowBehindDefaults.defaultSourceDrawing(size, offset),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(p)
+                                    .onGloballyPositioned { center = it.size.center }
+                            )
+                        } else {
+                            ShowBehind(
+                                offset = { offset },
+                                offsetChange = { offset += it },
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(p)
+                                    .onGloballyPositioned { center = it.size.center },
+                                sourceDrawing = { color, blendMode ->
+                                    drawRect(
+                                        color = color,
+                                        size = Size(size, size),
+                                        blendMode = blendMode,
+                                        topLeft = offset
+                                    )
+                                },
+                            )
+                        }
+
+                        /*if (target) {
                             ShowBehind(
                                 offset = offset,
                                 offsetChange = { offset += it },
@@ -207,7 +238,7 @@ internal fun App() {
                                     )
                                 }
                             )
-                        }
+                        }*/
                     }
                 }
             }
