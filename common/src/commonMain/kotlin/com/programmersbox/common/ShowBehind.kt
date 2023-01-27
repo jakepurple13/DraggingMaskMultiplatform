@@ -109,8 +109,8 @@ internal object ShowBehindDefaults {
 
 @Composable
 internal fun ShowBehind(
-    offset: () -> Offset,
     offsetChange: (Offset) -> Unit,
+    offset: () -> Offset = { Offset.Zero },
     modifier: Modifier = Modifier.fillMaxSize(),
     surfaceColor: Color = MaterialTheme.colorScheme.surface,
     onDragStart: (Offset) -> Unit = {},
