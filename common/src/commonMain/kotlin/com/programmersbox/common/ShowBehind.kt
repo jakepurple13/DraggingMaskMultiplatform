@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -37,7 +38,11 @@ internal fun ShowBehind(
         )
     },
     sourceDraggingComposable: @Composable Density.() -> Unit = {
-        Box(Modifier.border(2.dp, MaterialTheme.colorScheme.primary, CircleShape))
+        Box(
+            Modifier
+                .size(size.toDp())
+                .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+        )
     },
     onDragStart: (Offset) -> Unit = {},
     onDragEnd: () -> Unit = {},

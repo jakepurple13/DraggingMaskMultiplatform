@@ -6,9 +6,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -35,6 +33,7 @@ internal fun App() {
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         var center by remember { mutableStateOf(IntOffset.Zero) }
+        var circleOrRect by remember { mutableStateOf(true) }
         Surface {
             ModalNavigationDrawer(
                 drawerContent = {
@@ -89,6 +88,16 @@ internal fun App() {
                                 }
                             },
                             actions = {
+                                IconToggleButton(
+                                    circleOrRect,
+                                    onCheckedChange = { circleOrRect = it }
+                                ) {
+                                    Icon(
+                                        if (circleOrRect) Icons.Default.Circle else Icons.Default.Square,
+                                        null
+                                    )
+                                }
+
                                 OutlinedButton(
                                     onClick = {
                                         scope.launch {
@@ -162,30 +171,44 @@ internal fun App() {
                         }
                     }
                     //This one guy is the reason why the masking works!
-                    ShowBehind(
-                        offset = offset,
-                        offsetChange = { offset += it },
-                        size = size,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(p)
-                            .onGloballyPositioned { center = it.size.center },
-                        sourceDrawing = { color, blendMode ->
-                            drawRect(
-                                color = color,
-                                size = Size(size, size),
-                                blendMode = blendMode,
-                                topLeft = offset
+                    Crossfade(circleOrRect) { target ->
+                        if (target) {
+                            ShowBehind(
+                                offset = offset,
+                                offsetChange = { offset += it },
+                                size = size,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(p)
+                                    .onGloballyPositioned { center = it.size.center }
                             )
-                        },
-                        sourceDraggingComposable = {
-                            Box(
-                                Modifier
-                                    .size(size.toDp())
-                                    .border(2.dp, MaterialTheme.colorScheme.primary, RectangleShape)
+                        } else {
+                            ShowBehind(
+                                offset = offset,
+                                offsetChange = { offset += it },
+                                size = size,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(p)
+                                    .onGloballyPositioned { center = it.size.center },
+                                sourceDrawing = { color, blendMode ->
+                                    drawRect(
+                                        color = color,
+                                        size = Size(size, size),
+                                        blendMode = blendMode,
+                                        topLeft = offset
+                                    )
+                                },
+                                sourceDraggingComposable = {
+                                    Box(
+                                        Modifier
+                                            .size(size.toDp())
+                                            .border(2.dp, MaterialTheme.colorScheme.primary, RectangleShape)
+                                    )
+                                }
                             )
                         }
-                    )
+                    }
                 }
             }
         }
